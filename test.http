@@ -1,0 +1,12 @@
+@rootURl = http://localhost:8000
+
+
+### signup test api
+POST {{rootURl}}/api/auth/signup
+Content-Type: application/json
+
+{
+    "userName": "Bijay Bhandari",
+    "email": "bijay@email.com",
+    "password": "adamghat"
+}
