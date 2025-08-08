@@ -4,23 +4,12 @@ dotenv.config();
 import { dbConnect } from "./src/config/dbConnect.js";
 import userRoutes from "./src/routes/userRoutes.js";
 import authRoutes from "./src/routes/authRoutes.js";
+import { errorHandler } from "./src/middlewares/errorHandler.js";
 
 const app = express();
 
 // middlewares
 app.use(express.json());
-
-// handle errprs
-app.use((req, res, err, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal server error";
-  return res.status(statusCode).json({
-    success: false,
-    statusCode,
-    message,
-  });
-});
-// middleware
 
 const PORT = 8000;
 
@@ -44,3 +33,6 @@ app.use("/api/user", userRoutes);
 
 // auth api routes
 app.use("/api/auth", authRoutes);
+
+// error handler middleware
+app.use(errorHandler);
