@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 dotenv.config();
 import { dbConnect } from "./src/config/dbConnect.js";
 import userRoutes from "./src/routes/userRoutes.js";
@@ -10,6 +11,14 @@ const app = express();
 
 // middlewares
 app.use(express.json());
+
+// enable cors policy
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 const PORT = 8000;
 
