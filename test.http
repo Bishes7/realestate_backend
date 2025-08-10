@@ -7,6 +7,15 @@ Content-Type: application/json
 
 {
     "userName": "Bijay Bhandari",
-    "email": "bijay@email.com",
+    "email": "bijaya@email.com",
     "password": "adamghat"
+}
+
+### login test api
+POST {{rootURl}}/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "ujit@gmail.com",
+    "password": "Adamghat7"
 }
