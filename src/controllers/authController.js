@@ -47,3 +47,12 @@ export const loginUser = catchAsync(async (req, res, next) => {
     res.status(401).json({ message: "Invalid email or password" });
   }
 });
+
+// logout controller
+export const logoutUser = catchAsync(async (req, res) => {
+  res.cookie("jwt", "", {
+    httpOnly: true,
+    expiresIn: new Date(0),
+  });
+  res.status(200).json({ message: "Logged out successfully" });
+});

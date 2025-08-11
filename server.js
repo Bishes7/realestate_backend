@@ -7,7 +7,11 @@ import userRoutes from "./src/routes/userRoutes.js";
 import authRoutes from "./src/routes/authRoutes.js";
 import { errorHandler } from "./src/middlewares/errorHandler.js";
 
+import cookieParser from "cookie-parser";
+
 const app = express();
+
+app.use(cookieParser());
 
 // middlewares
 app.use(express.json());
@@ -45,3 +49,11 @@ app.use("/api/auth", authRoutes);
 
 // error handler middleware
 app.use(errorHandler);
+
+app.use((err, req, res, next) => {
+  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  res.status(statusCode).json({
+    message: err.message,
+    stack: process.env.NODE_ENV === "production" ? null : err.stack,
+  });
+});
