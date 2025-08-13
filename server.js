@@ -7,6 +7,8 @@ import userRoutes from "./src/routes/userRoutes.js";
 import authRoutes from "./src/routes/authRoutes.js";
 import { errorHandler } from "./src/middlewares/errorHandler.js";
 import listingRoutes from "./src/routes/listingRoutes.js";
+import uploadRoutes from "./src/routes/uploadRoutes.js";
+import path from "path";
 
 import cookieParser from "cookie-parser";
 
@@ -52,6 +54,12 @@ app.use("/api/auth", authRoutes);
 
 // listing api routes
 app.use("/api/listing", listingRoutes);
+
+// image upload routes
+app.use("/api/upload", uploadRoutes);
+
+// Serve uploaded files
+app.use("/uploads", express.static(path.join(process.cwd(), "/uploads")));
 
 // error handler middleware
 app.use(errorHandler);
