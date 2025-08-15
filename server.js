@@ -59,7 +59,7 @@ app.use("/api/listing", listingRoutes);
 app.use("/api/upload", uploadRoutes);
 
 // Serve uploaded files
-app.use("/uploads", express.static(path.join(process.cwd(), "/uploads")));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // error handler middleware
 app.use(errorHandler);
