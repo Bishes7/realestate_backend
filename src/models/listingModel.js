@@ -25,11 +25,11 @@ const listingSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    bathrooms: {
+    baths: {
       type: Number,
       required: true,
     },
-    bedrooms: {
+    beds: {
       type: Number,
       required: true,
     },
@@ -49,12 +49,14 @@ const listingSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
-    image: {
-      type: Array,
+    images: {
+      type: [String],
       required: true,
     },
-    userRef: {
-      type: String,
+
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
   },
