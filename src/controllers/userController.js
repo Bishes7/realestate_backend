@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { catchAsync } from "../middlewares/catchAsync.js";
 import User from "../models/userModel.js";
+import Listing from "../models/listingModel.js";
 
 // update user profile
 
@@ -29,4 +30,15 @@ export const updateUserProfile = catchAsync(async (req, res) => {
     userName: updatedUser.userName,
     email: updatedUser.email,
   });
+});
+
+// get user listings
+export const getUserListings = catchAsync(async (req, res) => {
+  if (req.userInfo._id.toString() === req.params.id) {
+    const listings = await Listing.find({ user: req.userInfo._id });
+    res.status(200).json(listings);
+  } else {
+    res.status(403);
+    throw new Error("You can only view your own listings");
+  }
 });

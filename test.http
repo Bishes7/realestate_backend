@@ -19,3 +19,8 @@ Content-Type: application/json
     "email": "ujit@gmail.com",
     "password": "Adamghat7"
 }
+
+### get user listings
+GET {{rootURl}}/api/user/listing/689894f5b9c0ee9cb27fb3ef
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODk4OTRmNWI5YzBlZTljYjI3ZmIzZWYiLCJpYXQiOjE3NTUyNjY3MTcsImV4cCI6MTc1Nzg1ODcxN30.76wiXKkbEO1oTgRfOAqOnrcrDQ2PQ4ZUTyKOXrPZcm8
