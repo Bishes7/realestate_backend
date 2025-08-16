@@ -9,10 +9,13 @@ import { errorHandler } from "./src/middlewares/errorHandler.js";
 import listingRoutes from "./src/routes/listingRoutes.js";
 import uploadRoutes from "./src/routes/uploadRoutes.js";
 import path from "path";
-
+import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
 
 const app = express();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // cookie parser
 
@@ -59,7 +62,7 @@ app.use("/api/listing", listingRoutes);
 app.use("/api/upload", uploadRoutes);
 
 // Serve uploaded files
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // error handler middleware
 app.use(errorHandler);
