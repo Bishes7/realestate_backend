@@ -11,6 +11,7 @@ import uploadRoutes from "./src/routes/uploadRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
+import contactRoutes from "./src/routes/contactRoutes.js";
 
 const app = express();
 
@@ -60,6 +61,9 @@ app.use("/api/listing", listingRoutes);
 
 // image upload routes
 app.use("/api/upload", uploadRoutes);
+
+// contact Routes
+app.use("/api/contact", contactRoutes);
 
 // Serve uploaded files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

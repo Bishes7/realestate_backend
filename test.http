@@ -29,3 +29,6 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODk4OTRmNWI5
 DELETE {{rootURl}}/api/listing/delete/689f385df98f6b97b9762385
 Content-Type: application/json
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODk4OTRmNWI5YzBlZTljYjI3ZmIzZWYiLCJpYXQiOjE3NTUyNjY3MTcsImV4cCI6MTc1Nzg1ODcxN30.76wiXKkbEO1oTgRfOAqOnrcrDQ2PQ4ZUTyKOXrPZcm8
+
+###get listings
+GET {{rootURl}}/api/listing/get 
