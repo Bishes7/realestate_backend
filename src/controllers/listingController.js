@@ -35,3 +35,13 @@ export const deleteListingController = catchAsync(async (req, res) => {
   await Listing.findByIdAndDelete(req.params.id);
   res.status(200).json({ message: "Listing has been deleted" });
 });
+
+// get listings using id
+export const getListingController = catchAsync(async (req, res) => {
+  const listing = await Listing.findById(req.params.id);
+  if (!listing) {
+    return res.status(404).json({ message: "Listing not found" });
+  }
+
+  res.status(200).json(listing);
+});
