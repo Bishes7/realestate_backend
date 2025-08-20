@@ -71,8 +71,8 @@ export const getListings = catchAsync(async (req, res) => {
   }
   const searchTerm = req.query.searchTerm || "";
 
-  const sort = req.query.sort || "createdAt";
-  const order = req.query.order || "desc";
+  const sortField = req.query.sort || "createdAt";
+  const sortOrder = req.query.order === "asc" ? 1 : -1;
 
   const listings = await Listing.find({
     name: { $regex: searchTerm, $options: "i" },
@@ -81,7 +81,7 @@ export const getListings = catchAsync(async (req, res) => {
     parking,
     type,
   })
-    .sort({ [sort]: order })
+    .sort({ [sortField]: sortOrder })
     .limit(limit)
     .skip(startIndex);
 
