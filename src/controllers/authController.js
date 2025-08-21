@@ -41,6 +41,7 @@ export const loginUser = catchAsync(async (req, res, next) => {
         _id: user._id,
         userName: user.userName,
         email: user.email,
+        role: user.role,
       },
     });
   } else {
