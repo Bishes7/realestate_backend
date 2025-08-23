@@ -12,6 +12,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
 import contactRoutes from "./src/routes/contactRoutes.js";
+import adminRoutes from "./src/routes/adminRoutes.js";
 
 const app = express();
 
@@ -50,6 +51,8 @@ app.get("/", (req, res) => {
   res.send("Server is live");
 });
 
+// admin api routes
+app.use("/api/admin", adminRoutes);
 //  user api routes
 app.use("/api/user", userRoutes);
 

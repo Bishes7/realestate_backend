@@ -25,7 +25,7 @@ export const isAuthenticated = async (req, res, next) => {
 
 // Admin Middleware
 export const admin = (req, res, next) => {
-  if (req.userInfo && req.userInfo.isAdmin) {
+  if (req.userInfo && req.userInfo.role === "admin") {
     next();
   } else {
     res.status(401);
