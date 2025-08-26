@@ -3,7 +3,7 @@ import {
   updateUserProfile,
   getUserListings,
 } from "../controllers/userController.js";
-import { isAuthenticated } from "../middlewares/authMiddleware.js";
+import { admin, isAuthenticated } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 

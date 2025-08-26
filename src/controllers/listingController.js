@@ -80,18 +80,26 @@ export const getListings = catchAsync(async (req, res) => {
   const sortField = req.query.sort || "createdAt";
   const sortOrder = req.query.order === "asc" ? 1 : -1;
 
-  const listings = await Listing.find({
+  // Build query filter
+  const filter = {
     name: { $regex: searchTerm, $options: "i" },
     offer,
     furnished,
     parking,
     type,
-  })
+  };
+
+  // get total count for pagination
+  const totalCount = await Listing.countDocuments(filter);
+
+  // get paginated Listings
+  const listings = await Listing.find(filter)
     .sort({ [sortField]: sortOrder })
     .limit(limit)
     .skip(startIndex);
 
-  return res.status(200).json(listings);
+  // send listings and total count
+  return res.status(200).json({ listings, totalCount });
 });
 
 // update listings
