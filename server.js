@@ -1,7 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
+
 import cors from "cors";
 dotenv.config();
+console.log("OpenAI Key Loaded:", process.env.OPENAI_API_KEY ? "Yes" : "No");
 import { dbConnect } from "./src/config/dbConnect.js";
 import userRoutes from "./src/routes/userRoutes.js";
 import authRoutes from "./src/routes/authRoutes.js";
@@ -13,6 +15,7 @@ import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
 import contactRoutes from "./src/routes/contactRoutes.js";
 import adminRoutes from "./src/routes/adminRoutes.js";
+import chatBotRoutes from "./src/routes/chatBotRoutes.js";
 
 const app = express();
 
@@ -67,6 +70,9 @@ app.use("/api/upload", uploadRoutes);
 
 // contact Routes
 app.use("/api/contact", contactRoutes);
+
+// chatbot routes
+app.use("/api/chatbot", chatBotRoutes);
 
 // Serve uploaded files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

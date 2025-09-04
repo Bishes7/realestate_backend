@@ -52,7 +52,7 @@ export const getAdminStats = catchAsync(async (req, res) => {
 
   // listings group by type (rent or sell)
   const listingsByType = await Listing.aggregate([
-    { $group: { _id: "type", count: { $sum: 1 } } },
+    { $group: { _id: "$type", count: { $sum: 1 } } },
   ]);
 
   // Listings grouped by month
@@ -66,10 +66,23 @@ export const getAdminStats = catchAsync(async (req, res) => {
     { $sort: { _id: 1 } },
   ]);
 
+  const usersByWeek = await User.aggregate([
+    {
+      $group: {
+        _id: {
+          $dateToString: { format: "%G-%V", date: "$createdAt" },
+        },
+        count: { $sum: 1 },
+      },
+    },
+    { $sort: { _id: 1 } },
+  ]);
+
   res.status(200).json({
     totalUsers,
     totalListings,
     listingsByType,
     listingsByMonth,
+    usersByWeek,
   });
 });
