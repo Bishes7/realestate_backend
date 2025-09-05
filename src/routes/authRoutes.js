@@ -4,7 +4,9 @@ import {
   loginUser,
   logoutUser,
   signUp,
+  deleteMyAccount,
 } from "../controllers/authController.js";
+import { isAuthenticated } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -16,6 +18,9 @@ router.post("/login", loginUser);
 
 // logout routes
 router.post("/logout", logoutUser);
+
+// delete account routes
+router.delete("/delete-account", isAuthenticated, deleteMyAccount);
 
 // demo user
 router.post("/demo-login", demoLogin);

@@ -58,6 +58,23 @@ export const logoutUser = catchAsync(async (req, res) => {
   res.status(200).json({ message: "Logged out successfully" });
 });
 
+// delete account controller
+export const deleteMyAccount = catchAsync(async (req, res) => {
+  const userId = req.userInfo._id;
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  await user.deleteOne();
+
+  res.clearCookie("jwt");
+  res.status(200).json({ message: "Account deleted successfully" });
+});
+
 // Demo login User Controller
 export const demoLogin = catchAsync(async (req, res) => {
   const email = process.env.DEMO_USER_EMAIL;
