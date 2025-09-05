@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  demoLogin,
   loginUser,
   logoutUser,
   signUp,
@@ -15,5 +16,8 @@ router.post("/login", loginUser);
 
 // logout routes
 router.post("/logout", logoutUser);
+
+// demo user
+router.post("/demo-login", demoLogin);
 
 export default router;

@@ -6,13 +6,20 @@ import {
   getAllUsers,
 } from "../controllers/adminController.js";
 import { updateUserProfile } from "../controllers/userController.js";
+import { blockDemoUser } from "../middlewares/demoMiddleware.js";
 
 const router = express.Router();
 
 // only admins can excess
 router.get("/users", isAuthenticated, admin, getAllUsers);
-router.delete("/users/:id", isAuthenticated, admin, deleteUser);
-router.put("/users/:id/role", isAuthenticated, admin, updateUserProfile);
+router.delete("/users/:id", isAuthenticated, admin, blockDemoUser, deleteUser);
+router.put(
+  "/users/:id/role",
+  isAuthenticated,
+  admin,
+  blockDemoUser,
+  updateUserProfile
+);
 // admin stats
 router.get("/stats", isAuthenticated, admin, getAdminStats);
 

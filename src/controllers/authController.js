@@ -53,7 +53,47 @@ export const loginUser = catchAsync(async (req, res, next) => {
 export const logoutUser = catchAsync(async (req, res) => {
   res.cookie("jwt", "", {
     httpOnly: true,
-    expiresIn: new Date(0),
+    expires: new Date(0),
   });
   res.status(200).json({ message: "Logged out successfully" });
+});
+
+// Demo login User Controller
+export const demoLogin = catchAsync(async (req, res) => {
+  const email = process.env.DEMO_USER_EMAIL;
+  const password = process.env.DEMO_USER_PASSWORD;
+  const userName = process.env.DEMO_USER_NAME || "Demo User";
+
+  if (!email || !password) {
+    return res.status(500).json({ message: "Demo user not found" });
+  }
+
+  // find demo user
+  let demoUser = await User.findOne({ email });
+
+  if (!demoUser) {
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    demoUser = new User({
+      userName,
+      email,
+      password: hashedPassword,
+      role: "user",
+      isDemo: true,
+    });
+    await demoUser.save();
+  }
+  // generate cookie
+  const token = generateToken(res, demoUser._id);
+
+  res.status(200).json({
+    message: "Logged in as Demo User",
+    user: {
+      _id: demoUser._id,
+      userName: demoUser.userName,
+      email: demoUser.email,
+      role: demoUser.role,
+      isDemo: demoUser.isDemo,
+    },
+    token,
+  });
 });

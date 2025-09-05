@@ -8,17 +8,24 @@ import {
 } from "../controllers/listingController.js";
 import { admin, isAuthenticated } from "../middlewares/authMiddleware.js";
 import upload from "../middlewares/uploadMiddleware.js";
+import { blockDemoUser } from "../middlewares/demoMiddleware.js";
 
 const router = express.Router();
 
-router.post("/add", isAuthenticated, addlistingController);
-router.delete("/delete/:id", isAuthenticated, deleteListingController);
+router.post("/add", isAuthenticated, blockDemoUser, addlistingController);
+router.delete(
+  "/delete/:id",
+  isAuthenticated,
+  blockDemoUser,
+  deleteListingController
+);
 router.get("/get/:id", getListingController);
 router.get("/get", getListings);
 router.put(
   "/:id",
   isAuthenticated,
   admin,
+  blockDemoUser,
   upload.array("images", 5),
   updateListingController
 );
