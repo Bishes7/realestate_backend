@@ -32,7 +32,10 @@ app.use(express.json());
 // enable cors policy
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://realestate-backend-1-l7dx.onrender.com",
+    ],
     credentials: true,
   })
 );
