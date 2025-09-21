@@ -34,7 +34,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://real-estate-frontend-seven-sable.vercel.app/",
+      "https://real-estate-frontend-seven-sable.vercel.app",
     ],
     credentials: true,
   })
