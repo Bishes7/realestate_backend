@@ -34,7 +34,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://realestate-backend-1-l7dx.onrender.com",
+      "https://real-estate-frontend-seven-sable.vercel.app/",
     ],
     credentials: true,
   })
