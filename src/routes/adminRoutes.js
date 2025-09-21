@@ -11,6 +11,8 @@ import { blockDemoUser } from "../middlewares/demoMiddleware.js";
 const router = express.Router();
 
 // only admins can excess
+// admin stats
+router.get("/stats", isAuthenticated, admin, getAdminStats);
 router.get("/users", isAuthenticated, admin, getAllUsers);
 router.delete("/users/:id", isAuthenticated, admin, blockDemoUser, deleteUser);
 router.put(
@@ -20,7 +22,5 @@ router.put(
   blockDemoUser,
   updateUserProfile
 );
-// admin stats
-router.get("/stats", isAuthenticated, admin, getAdminStats);
 
 export default router;
