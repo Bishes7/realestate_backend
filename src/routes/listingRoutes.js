@@ -5,6 +5,8 @@ import {
   getListingController,
   getListings,
   updateListingController,
+  getPopularListings,
+  getSimilarListings,
 } from "../controllers/listingController.js";
 import { admin, isAuthenticated } from "../middlewares/authMiddleware.js";
 import upload from "../middlewares/uploadMiddleware.js";
@@ -21,6 +23,8 @@ router.delete(
 );
 router.get("/get/:id", getListingController);
 router.get("/get", getListings);
+router.get("/popular", getPopularListings);
+router.get("/similar/:id", getSimilarListings);
 router.put(
   "/:id",
   isAuthenticated,

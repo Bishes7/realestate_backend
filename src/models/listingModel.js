@@ -54,10 +54,26 @@ const listingSchema = new mongoose.Schema(
       required: true,
     },
 
+    sqft: {
+      type: Number,
+      default: 0,
+    },
+
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+
+    views: {
+      type: Number,
+      default: 0,
     },
   },
 

@@ -16,6 +16,8 @@ import cookieParser from "cookie-parser";
 import contactRoutes from "./src/routes/contactRoutes.js";
 import adminRoutes from "./src/routes/adminRoutes.js";
 import chatBotRoutes from "./src/routes/chatBotRoutes.js";
+import bookingRoutes from "./src/routes/bookingRoutes.js";
+// import notificationRoutes from "./src/routes/notificationRoutes.js";
 
 const app = express();
 
@@ -68,11 +70,17 @@ app.use("/api/auth", authRoutes);
 // listing api routes
 app.use("/api/listing", listingRoutes);
 
-// image upload routes
-app.use("/api/upload", uploadRoutes);
+// bookings api routes
+app.use("/api/bookings", bookingRoutes);
 
 // contact Routes
 app.use("/api/contact", contactRoutes);
+
+// notifications api routes - DISABLED
+// app.use("/api/notifications", notificationRoutes);
+
+// image upload routes
+app.use("/api/upload", uploadRoutes);
 
 // chatbot routes
 app.use("/api/chatbot", chatBotRoutes);

@@ -1,6 +1,6 @@
 import { catchAsync } from "../middlewares/catchAsync.js";
 import Listing from "../models/listingModel.js";
-const BASE_URL = process.env.BASE_URL;
+const BASE_URL = process.env.BASE_URL || "http://localhost:8000";
 
 // create listing
 export const addlistingController = catchAsync(async (req, res) => {
@@ -18,6 +18,7 @@ export const addlistingController = catchAsync(async (req, res) => {
     parking: req.body.parking === "true",
     offer: req.body.offer === "true",
     type: req.body.type,
+    sqft: Number(req.body.sqft) || 0,
     images: imagePaths, // store file paths
     user: req.userInfo._id, // attach user securely
   };
@@ -25,7 +26,10 @@ export const addlistingController = catchAsync(async (req, res) => {
   const listing = await Listing.create(listingData);
   const updatedListing = {
     ...listing._doc,
-    images: listing.images.map((img) => `${BASE_URL}${img}`),
+    imageUrls: listing.images.map((img) => `${BASE_URL}${img}`),
+    bedrooms: listing.beds,
+    bathrooms: listing.baths,
+    sqft: listing.sqft || 0
   };
 
   return res.status(201).json(updatedListing);
@@ -49,7 +53,31 @@ export const getListingController = catchAsync(async (req, res) => {
     return res.status(404).json({ message: "Listing not found" });
   }
 
-  res.status(200).json(listing);
+  // authorization: public can only see approved (or legacy without status); owners/admin can see all
+  const isOwner = req.userInfo && listing.user.toString() === req.userInfo._id.toString();
+  const isAdmin = req.userInfo && req.userInfo.role === "admin";
+  // Only block fully rejected listings; allow pending to be visible for demo UX
+  const isBlocked = listing.status === "rejected";
+  if (isBlocked && !isOwner && !isAdmin) {
+    return res.status(404).json({ message: "Listing not found" });
+  }
+
+  // increment views for visible listings
+  if (!isBlocked) {
+    listing.views = (listing.views || 0) + 1;
+    await listing.save();
+  }
+
+  // Transform single listing to include full image URLs and correct field names
+  const transformedListing = {
+    ...listing._doc,
+    imageUrls: listing.images.map(img => `${BASE_URL}${img}`),
+    bedrooms: listing.beds,
+    bathrooms: listing.baths,
+    sqft: listing.sqft || 0
+  };
+
+  res.status(200).json(transformedListing);
 });
 
 // get Listings
@@ -87,6 +115,7 @@ export const getListings = catchAsync(async (req, res) => {
     furnished,
     parking,
     type,
+    $or: [{ status: "approved" }, { status: "pending" }, { status: { $exists: false } }],
   };
 
   // get total count for pagination
@@ -98,8 +127,39 @@ export const getListings = catchAsync(async (req, res) => {
     .limit(limit)
     .skip(startIndex);
 
+  // Transform listings to include full image URLs and correct field names
+  const transformedListings = listings.map(listing => ({
+    ...listing._doc,
+    imageUrls: listing.images.map(img => `${BASE_URL}${img}`),
+    bedrooms: listing.beds,
+    bathrooms: listing.baths,
+    sqft: listing.sqft || 0 // Add default sqft if not present
+  }));
+
   // send listings and total count
-  return res.status(200).json({ listings, totalCount });
+  return res.status(200).json({ listings: transformedListings, totalCount });
+});
+
+// Admin: get all listings regardless of status
+export const adminGetAllListings = catchAsync(async (req, res) => {
+  const limit = parseInt(req.query.limit) || 50;
+  const startIndex = parseInt(req.query.startIndex) || 0;
+  const listings = await Listing.find({})
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .skip(startIndex);
+  const totalCount = await Listing.countDocuments({});
+  
+  // Transform listings to include full image URLs and correct field names
+  const transformedListings = listings.map(listing => ({
+    ...listing._doc,
+    imageUrls: listing.images.map(img => `${BASE_URL}${img}`),
+    bedrooms: listing.beds,
+    bathrooms: listing.baths,
+    sqft: listing.sqft || 0
+  }));
+  
+  return res.status(200).json({ listings: transformedListings, totalCount });
 });
 
 // update listings
@@ -125,6 +185,7 @@ export const updateListingController = catchAsync(async (req, res) => {
   listing.parking = req.body.parking ?? listing.parking;
   listing.offer = req.body.offer ?? listing.offer;
   listing.type = req.body.type || listing.type;
+  listing.sqft = Number(req.body.sqft) || listing.sqft;
 
   // Handle new images if provided
   if (req.files && req.files.length > 0) {
@@ -136,6 +197,59 @@ export const updateListingController = catchAsync(async (req, res) => {
   const BASE_URL = process.env.BASE_URL || "http://localhost:8000";
   res.status(200).json({
     ...updatedListing._doc,
-    images: updatedListing.images.map((img) => `${BASE_URL}${img}`),
+    imageUrls: updatedListing.images.map((img) => `${BASE_URL}${img}`),
+    bedrooms: updatedListing.beds,
+    bathrooms: updatedListing.baths,
+    sqft: updatedListing.sqft || 0
   });
+});
+
+// popular listings
+export const getPopularListings = catchAsync(async (req, res) => {
+  const limit = parseInt(req.query.limit) || 6;
+  const listings = await Listing.find({ status: "approved" })
+    .sort({ views: -1 })
+    .limit(limit);
+  
+  // Transform listings to include full image URLs and correct field names
+  const transformedListings = listings.map(listing => ({
+    ...listing._doc,
+    imageUrls: listing.images.map(img => `${BASE_URL}${img}`),
+    bedrooms: listing.beds,
+    bathrooms: listing.baths,
+    sqft: listing.sqft || 0
+  }));
+  
+  res.status(200).json(transformedListings);
+});
+
+// similar listings based on type and price range
+export const getSimilarListings = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const current = await Listing.findById(id);
+  if (!current) return res.status(404).json({ message: "Listing not found" });
+  const price = current.discountedPrice > 0 ? current.discountedPrice : current.regularPrice;
+  const delta = Math.max(5000, Math.round(price * 0.2));
+  const listings = await Listing.find({
+    _id: { $ne: id },
+    status: "approved",
+    type: current.type,
+    $or: [
+      { regularPrice: { $gte: price - delta, $lte: price + delta } },
+      { discountedPrice: { $gte: price - delta, $lte: price + delta } },
+    ],
+  })
+    .sort({ createdAt: -1 })
+    .limit(6);
+  
+  // Transform listings to include full image URLs and correct field names
+  const transformedListings = listings.map(listing => ({
+    ...listing._doc,
+    imageUrls: listing.images.map(img => `${BASE_URL}${img}`),
+    bedrooms: listing.beds,
+    bathrooms: listing.baths,
+    sqft: listing.sqft || 0
+  }));
+  
+  res.status(200).json(transformedListings);
 });

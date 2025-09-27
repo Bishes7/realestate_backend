@@ -15,10 +15,14 @@ router.post("/", sendContactMessage);
 router.get("/", isAuthenticated, admin, getContactMessage);
 router.delete("/:id", isAuthenticated, admin, blockDemoUser, deleteMessage);
 router.put(
-  "/:id/read",
+  "/:id/mark-read",
   isAuthenticated,
   admin,
   blockDemoUser,
+  (req, res, next) => {
+    console.log("Contact route PUT /:id/mark-read called with ID:", req.params.id);
+    next();
+  },
   updateMessageStatus
 );
 
