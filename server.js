@@ -37,8 +37,13 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://real-estate-frontend-ubwg.vercel.app",
+      "https://real-estate-frontend-seven-sable.vercel.app",
+      // Allow any Vercel deployment
+      /^https:\/\/real-estate-frontend-.*\.vercel\.app$/,
     ],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
   })
 );
 
